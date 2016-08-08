@@ -8,15 +8,23 @@
 
 import SpriteKit
 
-class GameScene: SKScene
+class GameScene: SKScene,SKPhysicsContactDelegate
 {
     var bird = SKSpriteNode()
     var bg = SKSpriteNode()
     var pipe1 = SKSpriteNode()
     var pipe2 = SKSpriteNode()
+    enum ColliderType: UInt32
+    {
+        case Bird = 1
+        case Object = 2
+    }
+    var gameOver = false
     
     override func didMoveToView(view: SKView)
     {
+        
+        self.physicsWorld.contactDelegate = self
         
         ///////////BACKGROUND/////////////////
         //defining the texture
@@ -62,12 +70,29 @@ class GameScene: SKScene
         bird.physicsBody = SKPhysicsBody(circleOfRadius: birdTexture.size().height/2)
         //applying gravity
         bird.physicsBody!.dynamic = true
+        //assigning the Bird category to the bird
+        bird.physicsBody!.categoryBitMask = ColliderType.Bird.rawValue
+        //detects the collison
+        bird.physicsBody!.contactTestBitMask = ColliderType.Object.rawValue
+        //used to prevent the sprite from passing thorugh the obejcts 
+        //here the bird one is the same as the ground one below so these two things wont pass through eachother
+        //Always remember: the collisionBitMask has to be the same for all the values we dont want to pass through eachother
+        bird.physicsBody!.collisionBitMask = ColliderType.Object.rawValue
         
         //////ground/////
         let ground = SKNode()
         ground.position = CGPointMake(0, 0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(self.frame.size.width, 1))
         ground.physicsBody?.dynamic = false
+        //assigning the Object category to the bird
+        ground.physicsBody!.categoryBitMask = ColliderType.Object.rawValue
+        //detects the collison
+        ground.physicsBody!.contactTestBitMask = ColliderType.Object.rawValue
+        //used to prevent the sprite from passing thorugh the obejcts but not really needed here
+        ground.physicsBody!.collisionBitMask = ColliderType.Object.rawValue
+
+        
+        
         self.addChild(ground)
         
         //two physics bodies wont cross each other
@@ -114,6 +139,16 @@ class GameScene: SKScene
         pipe1.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) + pipe1Texture.size().height / 2 + gapHeight / 2 + pipeLimit)
         //pipe1.size.height = self.frame.height / 2 - birdTexture.size().height
         pipe1.runAction(moveAndRemovePipes)
+        pipe1.physicsBody = SKPhysicsBody(rectangleOfSize: pipe1Texture.size())
+        pipe1.physicsBody!.dynamic = false
+        //assigning the Object category to the pipe
+        pipe1.physicsBody!.categoryBitMask = ColliderType.Object.rawValue
+        //detects the collison
+        pipe1.physicsBody!.contactTestBitMask = ColliderType.Object.rawValue
+        //used to prevent the sprite from passing thorugh the obejcts
+        pipe1.physicsBody!.collisionBitMask = ColliderType.Object.rawValue
+
+        
         addChild(pipe1)
         
         let pipe2Texture = SKTexture(imageNamed: "pipe2")
@@ -121,18 +156,38 @@ class GameScene: SKScene
         pipe2.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) - pipe2Texture.size().height / 2 - gapHeight / 2 + pipeLimit)
         // pipe2.size.height = self.frame.height / 2 - birdTexture.size().height
         pipe2.runAction(moveAndRemovePipes)
+        pipe2.physicsBody = SKPhysicsBody(rectangleOfSize: pipe2Texture.size())
+        pipe2.physicsBody!.dynamic = false
+        //assigning the Object category to the pipe
+        pipe2.physicsBody!.categoryBitMask = ColliderType.Object.rawValue
+        //detects the collison
+        pipe2.physicsBody!.contactTestBitMask = ColliderType.Object.rawValue
+        //used to prevent the sprite from passing thorugh the obejcts
+        pipe2.physicsBody!.collisionBitMask = ColliderType.Object.rawValue
+        
+        
         addChild(pipe2)
         
         
+    }
+    
+    func didBeginContact(contact: SKPhysicsContact)
+    {
+            print("We have contact")
+            gameOver = true
+            //Setting the speed of evertthing in the frame to be zero thus stopping the animation
+            self.speed = 0
     }
  
     override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?)
     {
       
-        //Applying the impuluse
-        bird.physicsBody!.velocity = CGVectorMake(0, 0)
-        bird.physicsBody?.applyImpulse(CGVectorMake(0, 50))
-        
+        if gameOver == false
+        {
+            //Applying the impuluse
+            bird.physicsBody!.velocity = CGVectorMake(0, 0)
+            bird.physicsBody?.applyImpulse(CGVectorMake(0, 50))
+        }
         
         
         
