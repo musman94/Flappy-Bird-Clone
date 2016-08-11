@@ -45,6 +45,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
         scoreLabel.fontSize = 60
         scoreLabel.text = "0"
         scoreLabel.position = CGPointMake(CGRectGetMidX(self.frame), self.frame.height - 70)
+        scoreLabel.zPosition = 4
         //scoreLabel.position = CGPoint(x : CGRectGetMidX(self.frame), y: self.frame.height - 70)
         movingObjects.addChild(scoreLabel)
         
@@ -85,6 +86,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
         
         //defining the position
         bird.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+        bird.zPosition = 2
         //animating
         let birdAnimate = SKAction.animateWithTextures([birdTexture,birdTexture2], timePerFrame: 0.1)
         let repeatAnimate = SKAction.repeatActionForever(birdAnimate)
@@ -107,6 +109,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
         
         //defining the postion and size
         bg.position = CGPoint(x: CGRectGetMidX(self.frame), y: CGRectGetMidY(self.frame))
+        bg.zPosition = 1
         bg.size.height = self.frame.height
         
         //animating the background
@@ -148,6 +151,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
         let pipe1Texture = SKTexture(imageNamed: "pipe1")
         pipe1 = SKSpriteNode(texture: pipe1Texture)
         pipe1.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) + pipe1Texture.size().height / 2 + gapHeight / 2 + pipeLimit)
+        pipe1.zPosition = 2
         //pipe1.size.height = self.frame.height / 2 - birdTexture.size().height
         pipe1.runAction(moveAndRemovePipes)
         pipe1.physicsBody = SKPhysicsBody(rectangleOfSize: pipe1Texture.size())
@@ -163,6 +167,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
         let pipe2Texture = SKTexture(imageNamed: "pipe2")
         pipe2 = SKSpriteNode(texture: pipe2Texture)
         pipe2.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) - pipe2Texture.size().height / 2 - gapHeight / 2 + pipeLimit)
+        pipe2.zPosition = 2
         // pipe2.size.height = self.frame.height / 2 - birdTexture.size().height
         pipe2.runAction(moveAndRemovePipes)
         pipe2.physicsBody = SKPhysicsBody(rectangleOfSize: pipe2Texture.size())
@@ -179,6 +184,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
         
         let gap = SKNode()
         gap.position = CGPoint(x: CGRectGetMidX(self.frame) + self.frame.size.width, y: CGRectGetMidY(self.frame) + pipeLimit )
+        gap.zPosition = 2
         gap.runAction(moveAndRemovePipes)
         gap.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(pipe1.size.width,gapHeight))
         gap.physicsBody!.dynamic = false
@@ -208,6 +214,7 @@ class GameScene: SKScene,SKPhysicsContactDelegate
                     gameOverLabel.fontName = "Helvetica"
                     gameOverLabel.fontSize = 30
                     gameOverLabel.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame))
+                    gameOverLabel.zPosition = 4
                     gameOverLabel.text = "Game Over! Tap to play again."
                     labelContainer.addChild(gameOverLabel)
                     //Setting the speed of evertthing in the frame to be zero thus stopping the animation
